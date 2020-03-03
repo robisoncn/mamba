@@ -31,9 +31,8 @@
 
 
 
-          <van-cell title="重复提醒" v-bind:click="isShowtrunkType=true"  is-link  />
-          <van-action-sheet v-bind:v-model="isShowtrunkType" v-bind:actions="actions" @select="ontrunkTypeSelect" />
-
+          <van-cell title="重复提醒" v-on:click="isShowtrunkType=true" :value="taskDetailInfo.trunkType" is-link  />
+          <van-action-sheet v-model="isShowtrunkType" :actions="actions" @select="ontrunkTypeSelect" />
           <van-cell title="提前提醒设置" is-link  />
 
           <van-cell title="提醒对象" is-link />
@@ -48,18 +47,26 @@
 </template>
 
 <script>
+
     export default {
       name: "alarmTaskCreate",
       data () {
         return {
           taskDetailInfo:{
             title:'',
-            message:'',
+            message:'AAAA',
             runTime:'',
             isShowTimeSelect:false,
-            isShowtrunkType:false,
-            actions:[{name:'每周一次'},{name:'每天一次'},{name:'每月一次'}]
-          }
+            isShowtrunkType:false
+
+           },
+            actions: [
+              { name: '一周一次' },
+              { name: '一月一次' },
+              { name: '一天一次', subname: '描述信息' }
+            ],
+          show:true,
+          isShowtrunkType:false
         }
       },
       methods:{
@@ -70,9 +77,13 @@
 
         },
         ontrunkTypeSelect (item) {
-          this.show = false;
+          this.isShowtrunkType = false;
+          this.taskDetailInfo.trunkType=item.name
           console.log('ontrunkTypeSelect')
 
+        },
+        onClick(){
+          console.log('sssssssss')
         }
       }
     }

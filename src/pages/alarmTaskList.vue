@@ -4,7 +4,7 @@
     <div class="main-container">
 
       <van-cell-group>
-        <van-row v-for="alarmTask in alarmTaskList" class="ran_row">
+        <van-row v-for="alarmTask in alarmTaskList" v-bind:key="alarmTask.taskid"  class="ran_row">
           <van-col  span="4" v-if="pageStates=='update'" class="inco-delete-bar">
             <van-icon name="delete" color="#EE0A24" size="1.8rem" style="margin-top: 10px;" />
           </van-col>
@@ -14,7 +14,7 @@
                               is-link v-bind:to="{name:'AlarmTaskCreate',query:{id:alarmTask.taskId}}"
             />
             <van-cell v-if="pageStates=='view'" v-bind:title="alarmTask.taskName"
-                      v-bind:value="alarmTask.taskInfo" v-bind:label="alarmTask.label"
+                      v-bind:value="alarmTask.taskInfo" v-bind:label="alarmTask.label" v-on:click="onclickCell(alarmTask)"
             />
           </van-col>
 

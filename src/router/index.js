@@ -6,6 +6,8 @@ import AlarmTaskList from '@/pages/AlarmTaskList'
 
 import AlarmTaskCreate from '@/pages/AlarmTaskCreate'
 
+import PersonSelectOrg from '@/components/PersonSelectOrg'
+
 Vue.use(Router)
 
 export default new Router({
@@ -29,7 +31,15 @@ export default new Router({
       component: AlarmTaskCreate,
       meta: {
       title:'创建提醒'
-    }
-    }
+      }
+    },
+    {
+      path: '/personSelect',
+      name: 'PersonSelectOrg',
+      component: PersonSelectOrg,
+      meta: {
+        title:'人员选择'
+      }
+    },
   ]
 })

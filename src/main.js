@@ -5,14 +5,12 @@ import App from './App'
 import router from './router'
 import  vuex from 'vuex'
 import { Button } from 'vant';
-import { Cell, CellGroup } from 'vant';
-import { Col, Row } from 'vant';
-import { Icon } from 'vant';
-import { Switch } from 'vant';
+import { Cell, CellGroup,Col, Row ,Icon,Switch,Field,DatetimePicker,ActionSheet,
+  Picker,Popup,Toast,Checkbox, CheckboxGroup,Search,TreeSelect,Image,
+  Collapse, CollapseItem} from 'vant';
+// import {Tree} from 'ant-design-vue'
+// import 'ant-design-vue/dist/antd.css';
 
-import { Field } from 'vant';
-import { DatetimePicker } from 'vant';
-import { ActionSheet } from 'vant';
 
 
 Vue.config.productionTip = false
@@ -26,9 +24,18 @@ Vue.use(Row);
 Vue.use(Icon);
 Vue.use(Switch);
 Vue.use(Field);
-
+Vue.use(Picker);
+Vue.use(Search)
 Vue.use(DatetimePicker);
-Vue.use(ActionSheet);
+Vue.use(ActionSheet );
+Vue.use(Popup);
+Vue.use(Toast);
+Vue.use(Checkbox);
+Vue.use(CheckboxGroup);
+Vue.use(TreeSelect);
+Vue.use(Image);
+Vue.use(Collapse);
+Vue.use(CollapseItem);
 
 /* eslint-disable no-new */
 new Vue({

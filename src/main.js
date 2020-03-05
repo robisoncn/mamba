@@ -4,12 +4,11 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import  vuex from 'vuex'
-import { Button } from 'vant';
 import { Cell, CellGroup,Col, Row ,Icon,Switch,Field,DatetimePicker,ActionSheet,
   Picker,Popup,Toast,Checkbox, CheckboxGroup,Search,TreeSelect,Image,
-  Collapse, CollapseItem} from 'vant';
-// import {Tree} from 'ant-design-vue'
-// import 'ant-design-vue/dist/antd.css';
+  Collapse, CollapseItem,SwipeCell,Button } from 'vant';
+import {Avatar,Badge,Icon as Aincon} from 'ant-design-vue'
+import 'ant-design-vue/dist/antd.css';
 
 
 
@@ -36,6 +35,11 @@ Vue.use(TreeSelect);
 Vue.use(Image);
 Vue.use(Collapse);
 Vue.use(CollapseItem);
+Vue.use(SwipeCell);
+Vue.use(Avatar);
+Vue.use(Badge);
+Vue.use(Aincon);
+
 
 /* eslint-disable no-new */
 new Vue({

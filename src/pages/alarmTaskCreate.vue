@@ -14,7 +14,8 @@
             show-word-limit
           />
 
-          <van-cell title="订阅内容选择" is-link />
+          <van-cell title="订阅内容选择" is-link @click="isShowTarget=true" />
+          <!--<TargetSelect v-if="isShowTarget" />-->
 
           <van-cell title="提醒时间"
                     :value="taskDetailInfo.runTimeLabel" @click="isShowTimeSelect = true" is-link
@@ -87,8 +88,11 @@
 
 <script>
 
+  import TargetSelect from '@/components/TargetSelect';
+
     export default {
       name: "alarmTaskCreate",
+      comments:TargetSelect,
       data () {
         return {
           taskDetailInfo:{
@@ -102,13 +106,13 @@
             weekdayResult:[],
             beforTimeType:'',
             beforTimeTypeLabel:''
-
            },
           columns: [ '仅提醒一次' ,'每日提醒' , '自定义'  ],
           show:true,
           isShowtrunkType:false,
           isShowTimeSelect:false,
           isShowWeekDays:false,
+          isShowTarget:false,
           timeColumns: [
             // 第一列
             {

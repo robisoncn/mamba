@@ -7,6 +7,7 @@ import AlarmTaskList from '@/pages/AlarmTaskList'
 import AlarmTaskCreate from '@/pages/AlarmTaskCreate'
 
 import PersonSelectOrg from '@/components/PersonSelectOrg'
+import TargetSelect from '@/components/TargetSelect'
 
 Vue.use(Router)
 
@@ -39,6 +40,14 @@ export default new Router({
       component: PersonSelectOrg,
       meta: {
         title:'人员选择'
+      }
+    },
+    {
+      path: '/targetSelect',
+      name: 'TargetSelect',
+      component: TargetSelect,
+      meta: {
+        title:'指标选择'
       }
     },
   ]

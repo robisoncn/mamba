@@ -8,10 +8,12 @@ import AlarmTaskCreate from '@/pages/AlarmTaskCreate'
 
 import PersonSelectOrg from '@/components/PersonSelectOrg'
 import TargetSelect from '@/components/TargetSelect'
+import store from '../vuex/store'
+import httpService from '../http/httpService'
 
 Vue.use(Router)
 
-export default new Router({
+const  router =   new Router({
   routes: [
     {
       path: '/',
@@ -52,3 +54,30 @@ export default new Router({
     },
   ]
 })
+
+router.beforeEach((to,from,next)=>{
+
+
+  //拦截设置title
+  if(to.meta.title){
+    document.title=to.meta.title
+  }
+  httpService.post("api/core/auth!queryCurrentUser").then((res)=>{
+    let data = res.data.data;
+    if(data != undefined){
+      store.state.staffid = data.id;
+      store.state.staffname = data.account;
+      store.state.staffFullName = data.username;
+      store.state.isAuthPass = true;
+    }
+  }).catch(error=>{
+
+    console.log(error);
+  })
+
+  console.log('AAAAAAAAAAAA');
+
+  next()
+})
+
+export default  router;

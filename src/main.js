@@ -3,18 +3,29 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import  vuex from 'vuex'
+import  Vuex from 'vuex'
 import { Cell, CellGroup,Col, Row ,Icon,Switch,Field,DatetimePicker,ActionSheet,
   Picker,Popup,Toast,Checkbox, CheckboxGroup,Search,TreeSelect,Image,
   Collapse, CollapseItem,SwipeCell,Button } from 'vant';
 import {Avatar,Badge,Icon as Aincon} from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css';
+//引入axios
+import Axios from 'axios'
+//引入ivew，用于load
+import iView from 'iview';
+import 'iview/dist/styles/iview.css';
+import store from './vuex/store'
 
+
+
+//修改原型链，全局使用axios,这样之后可在每个组件的methods中调用$axios命令完成数据请求
+Vue.prototype.$axios=Axios
 
 
 Vue.config.productionTip = false
 
-Vue.use(vuex);
+Vue.use(iView);
+Vue.use(Vuex);
 Vue.use(Cell);
 Vue.use(CellGroup);
 Vue.use(Button);
@@ -45,13 +56,11 @@ Vue.use(Aincon);
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
 
-router.beforeEach((to,from,next)=>{
-  if(to.meta.title){
-    document.title=to.meta.title
-  }
-  next()
-})
+
+
+

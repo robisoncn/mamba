@@ -19,7 +19,7 @@
           </van-col>
 
           <van-col   span="4" class="switch-bar" v-if="pageStates=='view'" >
-              <van-switch v-model="alarmTask.checked" active-color="#07c160" inactive-color="#f0f0f0"  size="24"/>
+              <van-switch v-model="alarmTask.openStatus" active-color="#07c160" inactive-color="#f0f0f0"  size="24"/>
           </van-col>
 
         </van-row>
@@ -30,7 +30,7 @@
       <van-button class="button" v-on:click="onclickUpdate" type="info" v-if="pageStates=='view'">编辑</van-button>
       <van-button class="button" v-on:click="onclickCancelUpdate" type="info" v-if="pageStates=='update'">取消编辑</van-button>
       <van-button class="button" type="info" v-if="pageStates=='update'">编辑完成</van-button>
-      <van-button class="button" type="info" v-if="pageStates=='view'">创建提醒</van-button>
+      <van-button class="button" type="info" v-if="pageStates=='view'" v-on:click="onclickCreate">创建提醒</van-button>
     </div>
   </div>
 </template>
@@ -46,21 +46,21 @@
               {
                 taskName:'监控打卡',
                 taskInfo:'周一、周三 12:00',
-                taskId:'1',
-                checked:true,
+                id:'1',
+                openStatus:true,
                 label:''
               },
               {
                 taskName:'监控打卡',
                 taskInfo:'周二、周三 12:00',
-                taskId:'2',
-                checked:true
+                id:'2',
+                openStatus:true
               },
               {
                 taskName:'监控打卡',
                 taskInfo:'周一、周三 12:00',
-                taskId:'3',
-                checked:false,
+                id:'3',
+                openStatus:false,
                 label:"来自小于于的提醒"
               }
 
@@ -79,10 +79,11 @@
           this.$data.pageStates='view'
           console.log('CancelUpdate clicked!')
         },
-
         onclickCell(alarmTask){
-          console.log(alarmTask.taskId)
-
+          this.$router.push({path:'/alarmTaskCreate',query:{taskId:alarmTask.taskId}})
+        },
+        onclickCreate(){
+          this.$router.push({path:'/alarmTaskCreate'})
         }
       }
 

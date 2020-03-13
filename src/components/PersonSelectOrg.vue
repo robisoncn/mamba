@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <van-search
       v-model="value"
       shape="round"
@@ -8,24 +9,25 @@
       @input="onNameInput"
     />
     <div class="searchResult" v-if="isResultShow">
-      <van-checkbox-group v-model="searchResult">
+      <van-checkbox-group v-model="selectedPersonModel">
         <van-cell-group>
           <van-cell
             v-for="item in searchResult "
             clickable
             :key="item.staffid"
-            :title="item.staffname"
-            :icon="item.imgUrl"
+            :title="item.staffFullName"
+            :icon="'http://r.hrc.oa.com/photo/48/'+item.staffname+'.png'"
             :label="item.dept"
           >
-            <van-checkbox slot="right-icon" :name="item" ref="checkboxes" shape="square" />
+            <van-checkbox slot="right-icon" :name="item" ref="checkboxes" shape="square" @click="addSelectUser(item)" />
           </van-cell>
         </van-cell-group>
       </van-checkbox-group>
     </div>
 
     <div class="personListOrg">
-      <van-collapse v-model="activeName"  accordion>
+      <van-collapse v-model="activeName"  accordion @change="onOrgChange1($event)" >
+        <van-checkbox-group v-model="selectedPersonModel">
         <van-collapse-item :key="orgPersonInfo.orgid"
                            :name="orgPersonInfo.orgid" v-for="orgPersonInfo in orgPersonInfos">
 
@@ -34,206 +36,183 @@
             v-for="item in orgPersonInfo.staffInfos "
             clickable
             :key="item.staffid"
-            :title="item.staffname"
-            :icon="item.imgUrl"
+            :title="item.staffFullName"
+            :icon="'http://r.hrc.oa.com/photo/48/'+item.staffname+'.png'"
           >
-            <van-checkbox slot="right-icon" :name="item.isselected" ref="checkboxes" shape="square" />
+            <van-checkbox slot="right-icon" :name="item.staffid" ref="checkboxes" shape="square" @click="addSelectUser(item)" />
           </van-cell>
 
 
-          <van-collapse v-model="activeName1" class="personListOrg" accordion>
-            <van-collapse-item :key="child.orgid"
-                               :name="child.orgid" v-for="child in orgPersonInfo.children">
+          <van-collapse v-model="activeName1" class="personListOrg" accordion v-if="childOrgShow" @change="onOrgChange2($event)">
+<!--            <van-checkbox-group v-model="selectedPerson">-->
+            <van-collapse-item :key="child.orgFullPath"
+                               :name="child.orgFullPath" v-for="child in orgPersonInfo.children">
               <div slot="title"><van-icon name="cluster-o" /> {{child.orgName}} </div>
               <van-cell
                 v-for="childItem in child.staffInfos "
                 clickable
                 :key="childItem.staffid"
-                :title="childItem.staffname"
-                :icon="childItem.imgUrl"
+                :title="childItem.staffFullName"
+                :icon="'http://r.hrc.oa.com/photo/48/'+childItem.staffname+'.png'"
               >
-                <van-checkbox slot="right-icon" :name="childItem.isselected" ref="checkboxes" shape="square" />
+                <van-checkbox slot="right-icon" :name="childItem.staffid" ref="checkboxes" shape="square" @click="addSelectUser(childItem)" />
               </van-cell>
             </van-collapse-item>
+<!--           </van-checkbox-group>-->
           </van-collapse>
 
 
         </van-collapse-item>
-        <van-collapse-item title="PCG平台与内容事业群" name="3">内容</van-collapse-item>
+        </van-checkbox-group>
       </van-collapse>
     </div>
 
+    <pre>{{orgPersonInfos}}</pre>
+
     <div class="footer">
       <div class="selectedStaff">
-        <a-badge>
-          <a-icon slot="count" type="minus-circle" style="color: #f5222d" @click="onclickDelete" />
-          <a-avatar size="large" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-        </a-badge>
-        <a-badge>
-          <a-icon slot="count" type="minus-circle" style="color: #f5222d" @click="onclickDelete" />
-          <a-avatar size="large" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+
+        <a-badge  v-for="(item) in selectedPerson"  :key="item.staffid">
+          <a-icon slot="count" type="minus-circle" style="color: #f5222d" @click="onclickDelete(item)" />
+          <a-avatar size="large" :src="'http://r.hrc.oa.com/photo/48/'+item.staffname+'.png'" />
+
         </a-badge>
 
-        <van-button plain type="info" size="mini">确定</van-button>
+
+        <van-button plain type="info" size="mini" @click="onclickOK">确定</van-button>
       </div>
     </div>
+
   </div>
 </template>
 
 <script>
+  import httpService from '../http/httpService'
   export default {
     name: "PersonSelectOrg",
+    props:{selectPersonIn:{
+        type:Array,
+        default:()=> []
+      },
+    },
     data () {
       return {
         isResultShow:false,
-        searchResult:[
-          {staffname:'jerrywhang',staffid:'1',dept:'人力资源平台部',imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334"},
-          {staffname:'lululu',staffid:'2',dept:'人力资源平台部',imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334"},
-          {staffname:'jerrywhang',staffid:'3',dept:'人力资源平台部',imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334"}
-        ],
+        childOrgShow:false,
+        searchResult:[],
         value:'',
         activeName:[],
         activeName1:[],
-
         orgPersonInfos:[
-          {
-            orgid:'1',
-            orgName:'S3职能系统－HR与管理线',
-            children:[
-              {
-                orgid:'1-1',
-                orgName:'招聘活水部',
-                staffInfos:[
-                  {
-                    staffname:'jerrywhang(张伟)',
-                    staffid:'000014421',
-                    imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334",
-                    isselected:false
-                  },
-                  {
-                    staffname:'leelu(鲁力)',
-                    staffid:'000014422',
-                    imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334",
-                    isselected:false
-                  }
-                ]
-              },
-              {
-                orgid:'1-2',
-                orgName:'人力资源平台部',
-              }
-            ],
-            staffInfos:[
-              {
-                staffname:'jerrywhang(张伟)',
-                staffid:'000014421',
-                imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334",
-                isselected:false
-              },
-              {
-                staffname:'leelu(鲁力)',
-                staffid:'000014422',
-                imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334",
-                isselected:false
-              },
-              {
-                staffname:'jerrywhang(张伟)',
-                staffid:'000014421',
-                imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334",
-                isselected:false
-              },
-              {
-                staffname:'leelu(鲁力)',
-                staffid:'000014422',
-                imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334",
-                isselected:false
-              },
-              {
-                staffname:'jerrywhang(张伟)',
-                staffid:'000014421',
-                imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334",
-                isselected:false
-              },
-              {
-                staffname:'leelu(鲁力)',
-                staffid:'000014422',
-                imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334",
-                isselected:false
-              },
-              {
-                staffname:'jerrywhang(张伟)',
-                staffid:'000014421',
-                imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334",
-                isselected:false
-              },
-              {
-                staffname:'leelu(鲁力)',
-                staffid:'000014422',
-                imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334",
-                isselected:false
-              },
-              {
-                staffname:'jerrywhang(张伟)',
-                staffid:'000014421',
-                imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334",
-                isselected:false
-              },
-              {
-                staffname:'leelu(鲁力)',
-                staffid:'000014422',
-                imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334",
-                isselected:false
-              }
-            ]
-
-          },
-          {
-            orgid:'2',
-            orgName:'S2职能系统－财经线',
-            children:[
-              {
-                orgid:'2-1',
-                orgName:'招聘活水部',
-              },
-              {
-                orgid:'2-2',
-                orgName:'人力资源平台部',
-              }
-            ],
-            staffInfos:[
-              {
-                staffname:'jerrywhang(张伟)',
-                staffid:'000014421',
-                imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334",
-                isselected:false
-              },
-              {
-                staffname:'leelu(鲁力)',
-                staffid:'000014422',
-                imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334",
-                isselected:false
-              }
-            ]
-
-          }
-        ]
+        ],
+        selectedPerson: this.selectPersonIn,
+        selectedPersonModel:[],
+        isSearchFinish:true,
       }
     },
     methods:{
       onNameInput(value){//搜索框输入人名
-        this.searchResult.push({staffname:'jerrywhang',staffid:'1',dept:'人力资源平台部',imgUrl:"http://dayu.oa.com/avatars/jerrywzhang/profile.jpg?1542964334"})
+
         console.log(value);
-        if(value.length > 3){
+
+        if(value.length > 3 && this.isSearchFinish){
+          this.isSearchFinish=false;
+          httpService.get("/api/mia/staff/searchStaffInfoByName?name="+value).then(
+            res=>{
+              this.searchResult = res.data;
+              this.isSearchFinish=true;
+            }
+          ).catch(err=>{
+
+          });
           this.isResultShow = true;
         }else{
           this.isResultShow = false;
         }
 
       },
-      onclickDelete(){
-        console.log('delete');
-      }
+      onclickDelete(item){
+        this.selectedPerson = this.selectedPerson.filter(d => d.staffid !== item.staffid)
+        this.selectedPersonModel = this.selectedPersonModel.filter(d => d !== item.staffid)
+      },
+      onclickOK(){
+        this.$emit('ok',this.selectedPerson);
+      },
+      addSelectUser(item){
+        if(this.selectedPerson == undefined ||this.selectedPerson.length==0 ){
+          this.selectedPerson.push(item);
+        }else {
+          let push =true;
+          this.selectedPerson.forEach(p => {
+            if (p.staffid == item.staffid) {
+              this.selectedPerson = this.selectedPerson.filter(d => d.staffid !== item.staffid)
+              push = false;
+            }
+          });
+          if(push){
+            this.selectedPerson.push(item);
+          }
+        }
+      },
+      onOrgChange1(event){
+        if(event !== undefined && event !==''){
+          let orgid_in = event;
+          httpService.get("/api/mia/org/getOrgsAngStaffByParentId?parentId="+orgid_in).then( res =>{
+            // this.orgPersonInfos. = res.data;
+            this.orgPersonInfos.forEach(p=>{
+              if(p.orgid==orgid_in){
+                p.children=res.data.orgs;
+                p.staffInfos=res.data.staffs;
+              }
+            })
+            this.childOrgShow = true;
+          }).catch( err =>{
+            Toast.error("初始化异常，请稍后再试")
+          })
+        }else{
+          this.childOrgShow = false;
+        }
 
+        console.log("event"+event);
+        console.log(this.activeName);
+      },
+      onOrgChange2(event){
+        if(event !== undefined && event !==''){
+          let orgid_in = event;
+          httpService.get("/api/mia/org/getOrgsAngStaffByParent?fullPath="+orgid_in).then( res =>{
+            // this.orgPersonInfos.forEach(p=>{
+            //       p.children.forEach(d=>{
+            //         if(d.orgFullPath == orgid_in){
+            //           d.staffInfos=res.data.staffs;
+            //         }
+            //       })
+            // })
+            this.orgPersonInfos.forEach(p=>{
+              if(p.children !== undefined){
+                p.children.forEach(d=>{
+                  if(d.orgFullPath == orgid_in){
+                    d.staffInfos=res.data.staffs;
+                  }
+                });
+              }
+            })
+
+            this.childOrgShow = true;
+          }).catch( err =>{
+            console.log(err)
+          })
+        }else{
+          this.childOrgShow = false;
+        }
+      }
+    },
+    created() {
+      //初始化组织信息
+      httpService.get("/api/mia/org/getOrgsByRoot").then( res =>{
+        this.orgPersonInfos = res.data;
+      }).catch( err =>{
+        Toast.error("初始化异常，请稍后再试")
+      })
     }
   }
 </script>

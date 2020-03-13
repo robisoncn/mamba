@@ -6,7 +6,7 @@ import router from './router'
 import  Vuex from 'vuex'
 import { Cell, CellGroup,Col, Row ,Icon,Switch,Field,DatetimePicker,ActionSheet,
   Picker,Popup,Toast,Checkbox, CheckboxGroup,Search,TreeSelect,Image,
-  Collapse, CollapseItem,SwipeCell,Button } from 'vant';
+  Collapse, CollapseItem,SwipeCell,Button,Form,Tag,Dialog } from 'vant';
 import {Avatar,Badge,Icon as Aincon} from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css';
 //引入axios
@@ -15,6 +15,12 @@ import Axios from 'axios'
 import iView from 'iview';
 import 'iview/dist/styles/iview.css';
 import store from './vuex/store'
+import httpService from './http/httpService'
+import vueRsource from 'vue-resource'
+import TargetSelect from './components/TargetSelect'
+import MiaOrgStaffSelecter from './components/MiaOrgStaffSelecter'
+import { Tree,Affix } from 'ant-design-vue';
+
 
 
 
@@ -23,7 +29,8 @@ Vue.prototype.$axios=Axios
 
 
 Vue.config.productionTip = false
-
+Vue.use(Tree);
+Vue.use(Form);
 Vue.use(iView);
 Vue.use(Vuex);
 Vue.use(Cell);
@@ -50,6 +57,13 @@ Vue.use(SwipeCell);
 Vue.use(Avatar);
 Vue.use(Badge);
 Vue.use(Aincon);
+Vue.use(vueRsource);
+Vue.use(TargetSelect);
+Vue.use(MiaOrgStaffSelecter);
+Vue.use(Tag);
+Vue.use(Dialog);
+Vue.use(Affix);
+
 
 
 /* eslint-disable no-new */

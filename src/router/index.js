@@ -10,6 +10,7 @@ import PersonSelectOrg from '@/components/PersonSelectOrg'
 import TargetSelect from '@/components/TargetSelect'
 import store from '../vuex/store'
 import httpService from '../http/httpService'
+import MiaOrgStaffSelecter from '@/components/MiaOrgStaffSelecter'
 
 Vue.use(Router)
 
@@ -50,6 +51,14 @@ const  router =   new Router({
       component: TargetSelect,
       meta: {
         title:'指标选择'
+      }
+    },
+    {
+      path: '/miaOrgStaffSelecter',
+      name: 'MiaOrgStaffSelecter',
+      component: MiaOrgStaffSelecter,
+      meta: {
+        title:'人员选择'
       }
     },
   ]

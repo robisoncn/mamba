@@ -1,11 +1,14 @@
 <template>
-  <div>
-    <van-collapse v-model="activeNames">
-      <van-collapse-item :title="targetInfo.className" :name="targetInfo.classId"
-                         :key="targetInfo.classId"  v-for="targetInfo in targetInfos">
+  <div class="container">
+    <div class="title">指标选择</div>
 
-        <van-checkbox-group v-model="targetsModel">
-          <!--<van-cell-group>-->
+    <div class="selectContainer">
+      <van-collapse v-model="activeNames">
+        <van-collapse-item :title="targetInfo.className" :name="targetInfo.classId"
+                           :key="targetInfo.classId"  v-for="targetInfo in targetInfos">
+
+          <van-checkbox-group v-model="targetsModel">
+            <!--<van-cell-group>-->
             <van-cell
               v-for="(item, index) in targetInfo.targets"
               clickable
@@ -13,74 +16,85 @@
               :title="item.targetName"
               @click="toggle(index,item)"
             >
-              <van-checkbox slot="right-icon" :name="item.targetId" ref="checkboxes" />
+              <van-checkbox slot="right-icon" :name="item.targetId" @click="onCheckBoxClicked(item)" ref="checkboxes" />
             </van-cell>
-          <!--</van-cell-group>-->
-        </van-checkbox-group>
-      </van-collapse-item>
-    </van-collapse>
+            <!--</van-cell-group>-->
+          </van-checkbox-group>
+        </van-collapse-item>
+      </van-collapse>
+    </div>
     <div class="footer">
-      <van-button type="default">清空</van-button>
-      <van-button type="info">保存</van-button>
+      <van-button type="default" v-on:click="onBtnClear" >清空</van-button>
+      <van-button type="info" v-on:click="onBtnSave">保存</van-button>
     </div>
   </div>
 </template>
 
 <script>
-    export default {
-        name: "TargetSelect",
-        data (){
-          return {
-            activeNames:[],//默认展开项目
-            targetsModel:[],
-            targetInfos:[
-              {
-                classId:'A',
-                className:'TBI指标库',
-                targets:[
-                  {
-                    targetId:'A1',
-                    targetName:'人才离职风险指标',
-                    targetUrl:'http://www.baidu.com'
-                  },
-                  {
-                    targetId:'A2',
-                    targetName:'高潜力人才指标',
-                    targetUrl:'http://www.baidu.com'
-                  }
-                ]
-              },
-              {
-                classId:'B',
-                className:'数据指标库',
-                targets:[
-                  {
-                    targetId:'B1',
-                    targetName:'人才离职风险指标B',
-                    targetUrl:'http://www.baidu.com'
-                  },
-                  {
-                    targetId:'B2',
-                    targetName:'高潜力人才指标B',
-                    targetUrl:'http://www.baidu.com'
-                  }
-                ]
-              }
-            ],
+  import httpService from '../http/httpService'
+  export default {
+    name: "TargetSelect",
+    props:{
+        targetsModelInput:{
+          type:Array,
+          default:()=> []
+        }
+      },
+    data (){
+      return {
+        activeNames:[],//默认展开项目
+        targetsModel:this.targetsModelInput,
+        targetSelected:[],
+        targetInfos:[],
+      }
+    },
+    methods: {
+      toggle(index,item) {
+      },
+      onBtnSave(){
+        this.$emit('save',this.targetSelected);
+      },
+      onBtnClear(){
+        this.targetsModel = [];
+        this.targetSelected = [];
+        this.$emit('clear');
+      },
+      onCheckBoxClicked(item) {
+        if (this.targetSelected == undefined || this.targetSelected.length == 0) {
+          this.targetSelected.push(item);
+        } else {
+          let push =true;
+          this.targetSelected.forEach(p => {
+            if (p.targetId == item.targetId) {
+              this.targetSelected = this.targetSelected.filter(d => d.targetId !== item.targetId)
+              push = false;
+            }
+          });
+          if(push){
+              this.targetSelected.push(item);
           }
-        },
-        methods: {
-          toggle(index,item) {
-            console.log(item.targetName);
-            // this.$refs.checkboxes[index].toggle();
-          }
-        },
+        }
+      }
+    },
+    created() {
+      //初始化组织信息
+      httpService.get("/api/imia/target/searchAllTargets").then( res =>{
+        this.targetInfos = res.data;
+      }).catch( err =>{
+        Toast.error("初始化异常，请稍后再试")
+      })
     }
+  }
 </script>
 
 <style scoped>
 
-
+  .selectContainer{
+    background: #ffffff;
+    overflow: auto;
+    height: 0;
+    padding-bottom: 85vh;
+  }
   .footer{
     position: absolute;
     left: 0;
@@ -94,5 +108,13 @@
   .footer button{
     min-width: 150px;
     height: 40px;
+  }
+  .title{
+    min-height: 40px;
+    text-align: center;
+    line-height: 40px;
+    background: cornflowerblue;
+    color: #ffffff;
+    font-size: larger;
   }
 </style>

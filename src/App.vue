@@ -13,7 +13,7 @@ export default {
 
 <style>
 #app {
-  background: #f0f0f0;
+  background: #ffffff;
   height: 100vh;
 }
 .title{

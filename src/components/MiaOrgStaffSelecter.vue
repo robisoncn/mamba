@@ -28,7 +28,6 @@
       <a-tree :loadData="onLoadData" :treeData="treeData" checkable @check="onCheckBoxSelectd" showIcon>
         <a-avatar slot="meh" slot-scope="{title}" size="small" :src="'http://r.hrc.oa.com/photo/48/'+getStaffName(title)+'.png'" />
         <template slot="title" slot-scope="{title}">
-
           <span >{{title}}</span>
         </template>
       </a-tree>

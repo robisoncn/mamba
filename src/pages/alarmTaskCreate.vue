@@ -14,10 +14,8 @@
         placeholder="请输入提醒内容"
         show-word-limit
         :rules="[{ required: true, message: '请填写提醒内容' }]"
+        class="areacss"
       />
-
-
-      <van-cell title="订阅内容选择" is-link @click="isShowTarget=true" />
 
       <div class="targetDiv">
         <van-tag
@@ -31,6 +29,10 @@
           {{item.targetName}}
         </van-tag>
       </div>
+
+      <van-cell title="订阅内容选择" is-link @click="isShowTarget=true" />
+
+
 
 
       <van-cell title="提醒时间"
@@ -188,12 +190,12 @@
           }
         ],
         weekList:[{chnLabel:'星期一',indexKey:1},
-          {chnLabel:'星期二',indexKey:1},
-          {chnLabel:'星期三',indexKey:1},
-          {chnLabel:'星期四',indexKey:1},
-          {chnLabel:'星期五',indexKey:1},
-          {chnLabel:'星期六',indexKey:1},
-          {chnLabel:'星期天',indexKey:1},
+          {chnLabel:'星期二',indexKey:2},
+          {chnLabel:'星期三',indexKey:3},
+          {chnLabel:'星期四',indexKey:4},
+          {chnLabel:'星期五',indexKey:5},
+          {chnLabel:'星期六',indexKey:6},
+          {chnLabel:'星期天',indexKey:7},
           ],
         beforeTimeColumns:[
           '开始时','提前5分钟','提前15分钟','提前30分钟','提前1小时','提前1天'
@@ -379,10 +381,26 @@
 
   .targetDiv{
     background: #ffffff;
+    border-bottom: 1px solid #ebedf0;
   }
   .van-tag--medium {
     font-size: 12px;
     line-height: 20px;
     margin-left: 8px;
+  }
+
+
+
+  .areacss.van-cell:not(:last-child)::after {
+    position: absolute;
+    box-sizing: border-box;
+    content: ' ';
+    pointer-events: none;
+    right: 0;
+    bottom: 0;
+    left: 16px;
+    border-bottom: 0px solid #ebedf0;
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
   }
 </style>

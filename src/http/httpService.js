@@ -10,10 +10,12 @@ Vue.prototype.$axios=axios
 // 环境的切换
 if (process.env.NODE_ENV == 'development') {
   axios.defaults.baseURL = 'http://localhost:8091/';
-} else if (process.env.NODE_ENV == 'debug') {
+} else if (process.env.NODE_ENV == 'test') {
+  axios.defaults.baseURL = 'http://test.imia.oa.com/imiaapi';
+}else if (process.env.NODE_ENV == 'debug') {
   axios.defaults.baseURL = '';
 } else if (process.env.NODE_ENV == 'production') {
-  axios.defaults.baseURL = 'http://api.123dailu.com/';
+  axios.defaults.baseURL = 'http://test.imia.oa.com/imiaapi';
 }
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';

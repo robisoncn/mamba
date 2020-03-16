@@ -11,6 +11,8 @@ import TargetSelect from '@/components/TargetSelect'
 import store from '../vuex/store'
 import httpService from '../http/httpService'
 import MiaOrgStaffSelecter from '@/components/MiaOrgStaffSelecter'
+import StaffTreeSelect from '@/components/StaffTreeSelect'
+
 
 Vue.use(Router)
 
@@ -57,6 +59,13 @@ const  router =   new Router({
       path: '/miaOrgStaffSelecter',
       name: 'MiaOrgStaffSelecter',
       component: MiaOrgStaffSelecter,
+      meta: {
+        title:'人员选择'
+      }
+    },{
+      path: '/staffTreeSelect',
+      name: 'StaffTreeSelect',
+      component: StaffTreeSelect,
       meta: {
         title:'人员选择'
       }

@@ -6,7 +6,7 @@
       <van-cell-group>
         <van-row v-for="alarmTask in alarmTaskList" v-bind:key="alarmTask.id"  class="ran_row">
           <van-col  span="4" v-if="pageStates=='update'" class="inco-delete-bar">
-            <van-icon name="delete" color="#EE0A24" size="1.8rem" style="margin-top: 10px;" @click="onItemDelete(alarmTask)"/>
+            <van-icon name="delete" color="#EE0A24" size="1.5rem" style="margin-top: 10px;" @click="onItemDelete(alarmTask)"/>
           </van-col>
           <van-col span="20" >
             <van-cell v-if="pageStates=='update'" v-bind:title="alarmTask.taskName"
@@ -100,6 +100,7 @@
       created() {
         httpService.post("/api/miaAlarmTaskInfo/searchExt",{}).then(res=>{
             this.alarmTaskList  = res.data.data;
+
         }).catch(err=>{
 
         })
@@ -115,6 +116,10 @@
 .main-container{
   margin: 0px 8px 8px 8px;
   background: #ffffff;
+  overflow: auto;
+  height: 0;
+  padding-bottom: 85vh;
+  overflow-y: auto;
 }
 .button-bar{
   margin: 8px 8px 8px 8px;
@@ -144,4 +149,15 @@
 .ran_row{
   border-bottom: 1px #f0f0f0 solid;
 }
+
+.van-cell__value {
+  position: relative;
+  overflow: hidden;
+  color: #969799;
+  text-align: right;
+  font-size: 12px;
+  vertical-align: middle;
+  word-wrap: break-word;
+}
+
 </style>

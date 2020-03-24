@@ -1,6 +1,6 @@
 <template>
-
   <div class="main_form">
+
     <van-form @submit="onSubmit($event)" ref="form">
       <van-field v-model="taskDetailInfo.taskName" label="提醒主题" :rules="[{ required: true, message: '请填写提醒主题' }]" />
 
@@ -10,9 +10,7 @@
         autosize
         label="提醒内容"
         type="textarea"
-        maxlength="50"
         placeholder="请输入提醒内容"
-        show-word-limit
         :rules="[{ required: true, message: '请填写提醒内容' }]"
         class="areacss"
       />
@@ -65,7 +63,7 @@
 
 
 
-      <van-cell title="提醒对象"  :value="taskDetailInfo.personSelectedLable" is-link  @click="isShowPerson=true" />
+      <van-cell title="提醒对象"  :value="taskDetailInfo.personSelectedLable" is-link  @click="clickedPersonSeletct()" />
 
 
 
@@ -124,8 +122,9 @@
       :style="{ width: '100%',height: '100%' }"
     >
 <!--      <PersonSelectOrg @ok="onPersonOK" :selectPersonIn="taskDetailInfo.personSelected" />-->
-      <mia-org-staff-selecter @ok="onPersonOK" :selectPersonIn="taskDetailInfo.personSelected"></mia-org-staff-selecter>
+      <mia-org-staff-selecter @ok="onPersonOK" :maxNum="maxNum" :selectPersonIn="taskDetailInfo.personSelected"></mia-org-staff-selecter>
     </van-popup>
+
   </div>
 
 
@@ -139,6 +138,7 @@
   import PersonSelectOrg from "../components/PersonSelectOrg";
   import {Toast,Dialog} from 'vant';
   import MiaOrgStaffSelecter from "../components/MiaOrgStaffSelecter";
+  import store from '../vuex/store'
   export default {
     name: "alarmTaskCreate",
     components:{MiaOrgStaffSelecter, PersonSelectOrg, TargetSelect,},
@@ -158,7 +158,7 @@
           status:'create',
           targetsModel:[],
           personSelected:[],
-          personSelectedLable:'',
+          personSelectedLable:'我',
         },
         targetsModelOut:[],
         pageStatus:'create',
@@ -185,7 +185,14 @@
           },
           // 第三列
           {
-            values: ['00','15', '30','45'],
+            values: ['00','01','02', '03','04','05','06','07','08','09','10',
+              '11','12', '13','14','15','16','17','18','19','20',
+              '21','22', '23','24','25','26','27','28','29','30',
+              '31','32', '33','34','35','36','37','38','39','40',
+              '41','42', '43','44','45','46','47','48','49','50',
+              '51','52', '53','54','55','56','57','58','59'
+
+            ],
             defaultIndex: 1
           }
         ],
@@ -201,6 +208,7 @@
           '开始时','提前5分钟','提前15分钟','提前30分钟','提前1小时','提前1天'
         ],
         isShowBeforeTime:false,
+        maxNum:100,
       }
     },
     methods:{
@@ -213,6 +221,7 @@
               if(res.status==200){
                 Toast.success("保存成功");
                 this.taskDetailInfo = res.data;
+                wx.closeWindow();
                 this.$router.back()
               }
             }
@@ -307,9 +316,20 @@
       },
       onPersonOK(values){//点击选中人员
         this.taskDetailInfo.personSelected = values;
+        this.taskDetailInfo.personSelectedLable = '';
+        let firstPerson = '';
+        let secondPerson = '';
 
         if(this.taskDetailInfo.personSelected !== undefined && this.taskDetailInfo.personSelected.length>0){
-          this.taskDetailInfo.personSelected.forEach(p=>{this.taskDetailInfo.personSelectedLable+=p.staffname})
+          this.taskDetailInfo.personSelected.forEach(p=>{
+            if(p.staffid == store.state.staffid){
+              firstPerson='我';
+            }
+            if(p.staffid !== store.state.staffid){
+              secondPerson+=('、'+p.staffname)
+            }
+          })
+          this.taskDetailInfo.personSelectedLable = firstPerson + secondPerson;
         }
         this.taskDetailInfo.personSelectedLable = this.$options.filters['ellipsis'](this.taskDetailInfo.personSelectedLable);
         this.isShowPerson = false;
@@ -327,7 +347,15 @@
         }).catch(() => {
           // on cancel
         });
-      },
+      },clickedPersonSeletct(){
+        this.isShowPerson=true
+
+        if(this.taskDetailInfo.personSelected == undefined || this.taskDetailInfo.personSelected.length==0){
+          let staffid = store.state.staffid;
+          let staffname = store.state.staffname;
+          this.taskDetailInfo.personSelected.push({staffid:staffid,staffname:staffname});
+        }
+      }
     },
     filters: {
       ellipsis (value) {
@@ -339,7 +367,17 @@
       }
     },
     created() {
+
+      let chatid = this.$route.query.chatid;
       let id = this.$route.query.id;
+      httpService.get('/api/miaAlarmTaskInfo/init').then((res)=>{
+        this.maxNum = res.data.maxNum;
+        console.log(this.maxNum);
+      })
+
+
+
+
       if(id !== undefined){
         this.pageStatus='edit';
 
@@ -352,6 +390,30 @@
         }).catch(err=>{
           Toast.fail("查询失败")
         });
+      }else{
+        if(chatid !== null){
+          httpService.get('/api/imia/wechat/getChatGroupInfo?chatID='+chatid)
+            .then((res)=>{
+              let userList = res.data.userlist;
+
+              let staffid = store.state.staffid;
+              let staffname = store.state.staffname;
+              this.taskDetailInfo.personSelected.push({staffid:staffid,staffname:staffname});
+              this.taskDetailInfo.personSelectedLable = '我';
+              if(userList !== undefined && userList.length>0){
+                userList.forEach(p=>{
+                  if(p.staffname !== staffname){
+                    this.taskDetailInfo.personSelected.push(p);
+                    this.taskDetailInfo.personSelectedLable += '、'+ p.staffname
+                  }
+                });
+
+                this.taskDetailInfo.personSelectedLable = this.$options.filters['ellipsis'](this.taskDetailInfo.personSelectedLable);
+              }
+
+
+            })
+        }
       }
     }
   }
@@ -382,6 +444,7 @@
   .targetDiv{
     background: #ffffff;
     border-bottom: 1px solid #ebedf0;
+    line-height: 30px;
   }
   .van-tag--medium {
     font-size: 12px;

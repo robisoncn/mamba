@@ -20,7 +20,7 @@ import vueRsource from 'vue-resource'
 import TargetSelect from './components/TargetSelect'
 import MiaOrgStaffSelecter from './components/MiaOrgStaffSelecter'
 import { Tree,Affix } from 'ant-design-vue';
-
+import { PullRefresh } from 'vant';
 
 
 
@@ -63,6 +63,7 @@ Vue.use(MiaOrgStaffSelecter);
 Vue.use(Tag);
 Vue.use(Dialog);
 Vue.use(Affix);
+Vue.use(PullRefresh);
 
 
 

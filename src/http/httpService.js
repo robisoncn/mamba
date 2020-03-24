@@ -15,7 +15,8 @@ if (process.env.NODE_ENV == 'development') {
 }else if (process.env.NODE_ENV == 'debug') {
   axios.defaults.baseURL = '';
 } else if (process.env.NODE_ENV == 'production') {
-  axios.defaults.baseURL = 'http://test.imia.oa.com/imiaapi';
+  axios.defaults.baseURL = 'https://oa.m.tencent.com/an:imiaTest/imiaapi';
+  // axios.defaults.baseURL = 'http://test.imia.oa.com/imiaapi';
 }
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';

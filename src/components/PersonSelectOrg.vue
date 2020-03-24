@@ -88,11 +88,17 @@
 
 <script>
   import httpService from '../http/httpService'
+  // import Toast from 'vant'
   export default {
     name: "PersonSelectOrg",
-    props:{selectPersonIn:{
+    props:{
+      selectPersonIn:{
         type:Array,
         default:()=> []
+      },
+      maxNum:{
+      type:Number,
+        default:100
       },
     },
     data () {
@@ -136,9 +142,16 @@
         this.selectedPersonModel = this.selectedPersonModel.filter(d => d !== item.staffid)
       },
       onclickOK(){
+        if(this.selectedPerson !== undefined && this.selectedPerson.length>=this.maxNum){
+          this.Toast.error("提醒不能超过"+this.maxNum+"',请调整。")
+          return;
+        }
         this.$emit('ok',this.selectedPerson);
       },
       addSelectUser(item){
+
+
+
         if(this.selectedPerson == undefined ||this.selectedPerson.length==0 ){
           this.selectedPerson.push(item);
         }else {

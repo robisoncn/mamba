@@ -17,6 +17,7 @@ export default {
     testClick (){
       console.log('testClicked!');
       console.log(this.$store.state.staffFullName);
+      wx.closeWindow();
     }
   }
 }

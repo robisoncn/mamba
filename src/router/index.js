@@ -11,67 +11,82 @@ import TargetSelect from '@/components/TargetSelect'
 import store from '../vuex/store'
 import httpService from '../http/httpService'
 import MiaOrgStaffSelecter from '@/components/MiaOrgStaffSelecter'
-import StaffTreeSelect from '@/components/StaffTreeSelect'
-
 
 Vue.use(Router)
 
+let  routerConfig = {
+  mode: 'history',
+  base: '/an:imiaTest/imia'
+}
+
 const  router =   new Router({
+  ...routerConfig,
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
-    },
-    {
-      path: '/alarmTaskList',
-      name: 'AlarmTaskList',
-      component: AlarmTaskList,
-      meta: {
-        title:'提醒列表'
-      }
-    },
-    {
-      path: '/alarmTaskCreate',
-        name: 'AlarmTaskCreate',
-      component: AlarmTaskCreate,
-      meta: {
-      title:'创建提醒'
-      }
-    },
-    {
-      path: '/personSelect',
-      name: 'PersonSelectOrg',
-      component: PersonSelectOrg,
-      meta: {
-        title:'人员选择'
-      }
-    },
-    {
-      path: '/targetSelect',
-      name: 'TargetSelect',
-      component: TargetSelect,
-      meta: {
-        title:'指标选择'
-      }
-    },
-    {
-      path: '/miaOrgStaffSelecter',
-      name: 'MiaOrgStaffSelecter',
-      component: MiaOrgStaffSelecter,
-      meta: {
-        title:'人员选择'
-      }
-    },{
-      path: '/staffTreeSelect',
-      name: 'StaffTreeSelect',
-      component: StaffTreeSelect,
-      meta: {
-        title:'人员选择'
-      }
-    },
-  ]
+      component: {
+        template: '<router-view/>',
+      },
+      children: [
+        {
+          path: 'alarmTaskList',
+          name: 'AlarmTaskList',
+          component: AlarmTaskList,
+          meta: {
+            title: '提醒列表'
+          }
+        },
+        {
+          path: 'alarmTaskCreate',
+          name: 'AlarmTaskCreate',
+          component: AlarmTaskCreate,
+          meta: {
+            title: '创建提醒'
+          }
+        },
+        {
+          path: '*',
+          redirect: 'alarmTaskList'
+
+        },
+        // {
+        //  }
+        //       ] path: '/alarmTaskCreate',
+        //     name: 'AlarmTaskCreate',
+        //   component: AlarmTaskCreate,
+        //   meta: {
+        //   title:'创建提醒'
+        //   }
+        // },
+        // {
+        //   path: '/personSelect',
+        //   name: 'PersonSelectOrg',
+        //   component: PersonSelectOrg,
+        //   meta: {
+        //     title:'人员选择'
+        //   }
+        // },
+        // {
+        //   path: '/targetSelect',
+        //   name: 'TargetSelect',
+        //   component: TargetSelect,
+        //   meta: {
+        //     title:'指标选择'
+        //   }
+        // },
+        // {
+        //   path: '/miaOrgStaffSelecter',
+        //   name: 'MiaOrgStaffSelecter',
+        //   component: MiaOrgStaffSelecter,
+        //   meta: {
+        //     title:'人员选择'
+        //   }
+        // },
+
+      ]
+    }]
 })
+
 
 router.beforeEach((to,from,next)=>{
 
@@ -89,12 +104,7 @@ router.beforeEach((to,from,next)=>{
       store.state.isAuthPass = true;
     }
   }).catch(error=>{
-
-    console.log(error);
   })
-
-  console.log('AAAAAAAAAAAA');
-
   next()
 })
 
